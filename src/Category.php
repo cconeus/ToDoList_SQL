@@ -1,5 +1,4 @@
 <?php
-
     class Category
     {
         private $name;
@@ -28,23 +27,44 @@
 
         function save()
         {
-            $GLOBALS['DB']->exec("INSERT INTO categories (name) VALUES ('{$this->getName()}')");
-            $this->id= $GLOBALS['DB']->lastInsertId();
+              $GLOBALS['DB']->exec("INSERT INTO categories (name) VALUES ('{$this->getName()}');");
+              $this->id = $GLOBALS['DB']->lastInsertId();
+        }
+
+        function update($new_name)
+        {
+            $GLOBALS['DB']->exec("UPDATE categories SET name = '{$new_name}' WHERE id = {$this->getId()};");
+            $this->setName($new_name);
+        }
+
+        function addTask($task)
+        {
+            $GLOBALS['DB']->exec("INSERT INTO categories_tasks (category_id, task_id) VALUES ({$this->getId()}, {$task->getId()});");
         }
 
         function getTasks()
         {
-            $tasks = Array();
-            $returned_tasks = $GLOBALS['DB']->query("SELECT * FROM tasks WHERE category_id = {$this->getId()};");
-            foreach($returned_tasks as $task) {
-                $description = $task['description'];
-                $id = $task['id'];
-                $category_id = $task['category_id'];
-                $task_date = $task['task_date'];
-                $new_task = new Task($description, $id, $category_id, $task_date);
+            $query = $GLOBALS['DB']->query("SELECT task_id FROM categories_tasks WHERE category_id = {$this->getId()};");
+            $task_ids = $query->fetchAll(PDO::FETCH_ASSOC);
+
+            $tasks = array();
+            foreach($task_ids as $id) {
+                $task_id = $id['task_id'];
+                $result = $GLOBALS['DB']->query("SELECT * FROM tasks WHERE id = {$task_id};");
+                $returned_task = $result->fetchAll(PDO::FETCH_ASSOC);
+
+                $description = $returned_task[0]['description'];
+                $id = $returned_task[0]['id'];
+                $new_task = new Task($description, $id);
                 array_push($tasks, $new_task);
             }
             return $tasks;
+        }
+
+        function delete()
+        {
+            $GLOBALS['DB']->exec("DELETE FROM categories WHERE id = {$this->getId()};");
+            $GLOBALS['DB']->exec("DELETE FROM categories_tasks WHERE category_id = {$this->getId()};");
         }
 
         static function getAll()
@@ -62,8 +82,7 @@
 
         static function deleteAll()
         {
-            $GLOBALS['DB']->exec("DELETE FROM categories;");
-            $GLOBALS['DB']->exec("DELETE FROM tasks;");
+          $GLOBALS['DB']->exec("DELETE FROM categories;");
         }
 
         static function find($search_id)
@@ -73,12 +92,10 @@
             foreach($categories as $category) {
                 $category_id = $category->getId();
                 if ($category_id == $search_id) {
-                   $found_category = $category;
+                  $found_category = $category;
                 }
             }
             return $found_category;
         }
-
     }
-
 ?>
