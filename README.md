@@ -1,8 +1,8 @@
 # Silex To Do List
 
-##### Simple to do list in Silex, 08/05/15
+##### _Simple to do list in Silex_, 08/05/15
 
-#### By Don Schemmel & Mitch Rivet
+#### By _Dana Sharman_
 
 ## Description
 
@@ -28,7 +28,7 @@ HTML
 
 ### Legal
 
-Copyright (c) 2015 **_Don Schemmel_**
+Copyright (c) 2015 **_Dana Sharman_**
 
 This software is licensed under the MIT license.
 
