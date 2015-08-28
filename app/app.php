@@ -15,7 +15,7 @@
     ));
 
     $app->get("/", function() use ($app) {
-    return $app['twig']->render('index.html.twig', array('categories' => Category::getAll(), 'tasks' => Task::getAll()));
+    return $app['twig']->render('index.html.twig');
     });
 
     $app->get("/tasks", function() use ($app) {
@@ -72,6 +72,6 @@
     Task::deleteAll();
     return $app['twig']->render('delete_tasks.html.twig');
     });
-    
+
         return $app;
 ?>
